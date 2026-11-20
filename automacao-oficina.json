@@ -1,0 +1,1000 @@
+{
+  "name": "automacao-oficina",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.5,
+      "position": [
+        -2944,
+        384
+      ],
+      "id": "b30d066d-a241-42d1-8e5c-e79a00bb25f9",
+      "name": "Telegram Trigger",
+      "webhookId": "3fc8d0ce-4276-4f4c-be81-ebc39c4bbd6b",
+      "credentials": {
+        "telegramApi": {
+          "id": "MonIdH",
+          "name": "BOT TELEGRAM AUTOMACAO OFICINA"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.message.chat.id }}",
+        "text": "Impossivel processar a mensagem. Tente enviar um audio",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -2272,
+        496
+      ],
+      "id": "ac0d463e-b321-4eb9-b9d1-59d145d5decf",
+      "name": "Retorna mensagem de ERRO",
+      "webhookId": "ce614046-b211-423f-a3b0-2c43beb7ae50",
+      "credentials": {
+        "telegramApi": {
+          "id": "avaesdvdfxzbgvdfzv",
+          "name": "BOT TELEGRAM AUTOMACAO OFICINA"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "8217b878-a27d-47e5-8d9d-8918c69e6467",
+                    "leftValue": "={{ !!$json.message.voice }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "={{ \"voice\" }}"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "015e3e33-be47-4725-aeea-a9421585ff76",
+                    "leftValue": "={{ !!$json.message.voice }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "false",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "={{ \"non-voice\" }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -2720,
+        384
+      ],
+      "id": "1d176477-2412-419c-a9a9-b1ed12e70420",
+      "name": "Analise do tipo de mensagem"
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $json.message.voice.file_id }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -2496,
+        176
+      ],
+      "id": "6fa978c0-0b68-4af8-9235-f81a17d8b08b",
+      "name": "Download do arquivo de audio",
+      "webhookId": "b318e353-01cd-467d-a035-fb0868d9f5e8",
+      "retryOnFail": true,
+      "maxTries": 2,
+      "credentials": {
+        "telegramApi": {
+          "id": "avaesdvdfxzbgvdfzv",
+          "name": "BOT TELEGRAM AUTOMACAO OFICINA"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "fdaubn176GFTV9jk",
+          "mode": "list",
+          "cachedResultName": "Planilha_trocas",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/fdaubn176GFTV9jk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 550104079,
+          "mode": "list",
+          "cachedResultName": "ITENS_TROCAS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/fdaubn176GFTV9jk/edit#gid=550104079"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "PLACA": "={{ JSON.parse($json.choices[0].message.content).placa }}",
+            "MODELO": "={{ JSON.parse($json.choices[0].message.content).modelo }}",
+            "QUILOMETRAGEM": "={{ JSON.parse($json.choices[0].message.content).quilometragem }}",
+            "ÓLEO": "={{ JSON.parse($json.choices[0].message.content).oleo }}",
+            "QUANTIDADE ÓLEO": "={{ JSON.parse($json.choices[0].message.content).quantidade_oleo }}",
+            "FILTRO DE ÓLEO": "={{ JSON.parse($json.choices[0].message.content).filtro_de_oleo }}",
+            "FILTRO DE COMBUSTÍVEL": "={{ JSON.parse($json.choices[0].message.content).filtro_de_combustivel }}",
+            "FILTRO DE CABINE": "={{ JSON.parse($json.choices[0].message.content).filtro_de_cabine }}",
+            "FILTRO DE AR": "={{ JSON.parse($json.choices[0].message.content).filtro_de_ar }}",
+            "ARRUELA": "={{ JSON.parse($json.choices[0].message.content).arruela }}",
+            "ITENS EXTRAS": "={{ JSON.parse($json.choices[0].message.content).itens_extras }}",
+            "DATA": "={{ $now.format('dd/MM/yyyy')}}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "PLACA",
+              "displayName": "PLACA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "MODELO",
+              "displayName": "MODELO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "QUILOMETRAGEM",
+              "displayName": "QUILOMETRAGEM",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ÓLEO",
+              "displayName": "ÓLEO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "QUANTIDADE ÓLEO",
+              "displayName": "QUANTIDADE ÓLEO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "FILTRO DE ÓLEO",
+              "displayName": "FILTRO DE ÓLEO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "FILTRO DE COMBUSTÍVEL",
+              "displayName": "FILTRO DE COMBUSTÍVEL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "FILTRO DE CABINE",
+              "displayName": "FILTRO DE CABINE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "FILTRO DE AR",
+              "displayName": "FILTRO DE AR",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ARRUELA",
+              "displayName": "ARRUELA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ITENS EXTRAS",
+              "displayName": "ITENS EXTRAS",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "DATA",
+              "displayName": "DATA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -1200,
+        -208
+      ],
+      "id": "e4430cd7-51e2-470f-afaf-4fd40e672e5b",
+      "name": "Insere informacoes na planilha",
+      "retryOnFail": true,
+      "maxTries": 2,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "afshnfq335eyxvx",
+          "name": "GOOGLE SHEETS AUTOMACAO OFICINA"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "=Veículo cadastrado com sucesso! 🚗\n\nPlaca: {{ $json.PLACA }}\nModelo: {{ $json.MODELO }}\n\n🔗 Acesse a planilha completa no link:\nhttps://docs.google.com/spreadsheets/d/fdaubn176GFTV9jk/preview?gid=550104079#gid=550104079\n\n📄 Documento segue abaixo:",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -976,
+        -336
+      ],
+      "id": "894c7b5e-b2f7-45e9-aec3-af058a0e85d9",
+      "name": "Envia a mensagem de sucesso",
+      "webhookId": "29e64faf-e00a-4193-900b-f3d1640fe917",
+      "credentials": {
+        "telegramApi": {
+          "id": "avaesdvdfxzbgvdfzv",
+          "name": "BOT TELEGRAM AUTOMACAO OFICINA"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "errorMessage": "Erro ao baixar o arquivo de audio"
+      },
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        -2048,
+        272
+      ],
+      "id": "2d1cd5f5-10a9-4d1c-8a8b-6ed64ca55cda",
+      "name": "Stop and Error"
+    },
+    {
+      "parameters": {
+        "errorMessage": "Erro com agente de IA"
+      },
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        -1200,
+        240
+      ],
+      "id": "7dbc7a98-10fb-497c-80fb-7d0cb103b9da",
+      "name": "Stop and Error1"
+    },
+    {
+      "parameters": {
+        "errorMessage": "Erro ao adicionar informacoes a planilha"
+      },
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        -768,
+        -80
+      ],
+      "id": "567c00cd-fab5-48fd-b66b-a3dd8ca283b4",
+      "name": "Stop and Error2"
+    },
+    {
+      "parameters": {
+        "jsCode": "return []"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2048,
+        496
+      ],
+      "id": "41b3ebf0-f5f7-477a-914d-ff459971e05d",
+      "name": "\"Encerra\" fluxo -> non-voice message"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "=⚠️ Não foi possível baixar o seu áudio/arquivo.  Por favor, tente enviar a mensagem novamente em alguns instantes.",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -2272,
+        272
+      ],
+      "id": "e78d37c6-d18d-46f4-905e-11387f02c324",
+      "name": "MSG ERRO download voice",
+      "webhookId": "1e4c010c-8707-4584-a30c-63ced0ecaf78",
+      "credentials": {
+        "telegramApi": {
+          "id": "avaesdvdfxzbgvdfzv",
+          "name": "BOT TELEGRAM AUTOMACAO OFICINA"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "=⚠️ Ops, ocorreu um problema ao analisar o seu áudio!\n\nO áudio pode não ter ficado claro ou o agente de IA está enfrentando um pico de acessos no momento.\n\nPor favor, tente gravar e enviar a mensagem de voz novamente em alguns instantes.",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -1424,
+        192
+      ],
+      "id": "c1749508-0945-4f6b-b8b3-609ea8224797",
+      "name": "MSG ERRO transcr audio",
+      "webhookId": "9deb5c5a-627c-4161-becf-61e7f0a4db18",
+      "credentials": {
+        "telegramApi": {
+          "id": "avaesdvdfxzbgvdfzv",
+          "name": "BOT TELEGRAM AUTOMACAO OFICINA"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "=🚨 Os dados foram processados, mas ocorreu um erro ao salvar na planilha.  Por favor, aguarde alguns instantes e envie novamente. Se o problema persistir, avise o administrador do sistema",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -976,
+        -80
+      ],
+      "id": "dc577d4f-d5e7-4f93-a28e-dc9f995a8a95",
+      "name": "MSG ERRO append planilha",
+      "webhookId": "c06f54b2-a4a0-464c-8250-60258e93e61b",
+      "credentials": {
+        "telegramApi": {
+          "id": "avaesdvdfxzbgvdfzv",
+          "name": "BOT TELEGRAM AUTOMACAO OFICINA"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "toText",
+        "sourceProperty": "mensagem_formatada",
+        "options": {
+          "fileName": "=servicos_{{ $('Insere informacoes na planilha').item.json.MODELO }}_{{ $('Insere informacoes na planilha').item.json.PLACA.replace(\" \", \"\") }}.txt"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        -528,
+        -336
+      ],
+      "id": "ddf86c0d-4b0a-4117-992a-96d35a8fd65b",
+      "name": "Convert to File1",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "operation": "sendDocument",
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "binaryData": true,
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -288,
+        -464
+      ],
+      "id": "ccc77681-0667-4fac-9cf7-a42d03ee1df8",
+      "name": "ENVIA documento de informacoes",
+      "webhookId": "8105c469-921f-4f0f-b63e-cd81ca46777d",
+      "credentials": {
+        "telegramApi": {
+          "id": "avaesdvdfxzbgvdfzv",
+          "name": "BOT TELEGRAM AUTOMACAO OFICINA"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "errorMessage": "Erro ao converter dados para um arquivo .txt"
+      },
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        -64,
+        -240
+      ],
+      "id": "659a921f-5589-4acf-b63d-e2781ad3e129",
+      "name": "Stop and Error3"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "=⚠️ Falha no processamento\n❌ Não foi possível converter as informações para o arquivo .txt.",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -288,
+        -240
+      ],
+      "id": "fad0c67e-265a-4c88-a7b9-f9d9cecbda34",
+      "name": "MSG ERRO criar .txt",
+      "webhookId": "8688e704-d752-4d69-a801-95802c555976",
+      "credentials": {
+        "telegramApi": {
+          "id": "avaesdvdfxzbgvdfzv",
+          "name": "BOT TELEGRAM AUTOMACAO OFICINA"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Puxa os dados JSON vindos do nó anterior\nconst payload = $(\"Request para IA\").first().json.choices[0].message.content;\nconst dados = JSON.parse(payload);\n\n// Mapeia o nome bonito que vai aparecer no texto e a chave exata do JSON\nconst mapaCampos = [\n  { rotulo: 'Placa', chave: 'placa' },\n  { rotulo: 'Modelo', chave: 'modelo' },\n  { rotulo: 'Quilometragem', chave: 'quilometragem' },\n  { rotulo: 'Oleo', chave: 'oleo' },\n  { rotulo: 'Quantidade de oleo', chave: 'quantidade_oleo' },\n  { rotulo: 'Filtro de oleo', chave: 'filtro_de_oleo' },\n  { rotulo: 'Filtro de combustível', chave: 'filtro_de_combustivel' },\n  { rotulo: 'Filtro de cabine', chave: 'filtro_de_cabine' },\n  { rotulo: 'Filtro de ar', chave: 'filtro_de_ar' },\n  { rotulo: 'Arruela', chave: 'arruela' },\n  { rotulo: 'Itens Extras', chave: 'itens_extras' }\n];\n\nlet mensagem = \"\";\n\n// Varre todos os campos\nmapaCampos.forEach(campo => {\n  const valor = dados[campo.chave];\n  \n  // Se o valor existir e não for \"null\" (em string), nulo ou vazio, ele adiciona a linha\n  if (valor !== null && valor !== undefined && valor !== '' && valor !== 'null') {\n    mensagem += `- ${campo.rotulo} : ${valor}\\n`;\n  }\n});\n\n// Retorna a mensagem perfeitamente formatada para ser usada no Telegram ou em outro nó\nreturn { \n  mensagem_formatada: mensagem.trim() \n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -752,
+        -336
+      ],
+      "id": "524834c9-9b05-4324-a343-ff1c43342c99",
+      "name": "Formata mensagem"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "=✅ Audio recebido, processando informacoes.\n\n❗ Este processo pode levar alguns minutos.",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -2272,
+        64
+      ],
+      "id": "91f88aaf-3213-4515-8913-6a3ae1539ccb",
+      "name": "MSG CONFIRMA download audio",
+      "webhookId": "9a8420a4-9355-409e-a43b-e3f09b248a15",
+      "credentials": {
+        "telegramApi": {
+          "id": "avaesdvdfxzbgvdfzv",
+          "name": "BOT TELEGRAM AUTOMACAO OFICINA"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const arquivoBinario = $('Download do arquivo de audio').item.binary.data;\n\nreturn {\n  json: $input.item.json, \n  binary: {\n    data: arquivoBinario  \n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2048,
+        64
+      ],
+      "id": "7e015b02-c43b-46c6-8c37-a6e9582ee24f",
+      "name": "Recupera arquivo de audio"
+    },
+    {
+      "parameters": {
+        "jsCode": "for (const item of $input.all()) {\n\n  if (item.binary && item.binary.data) {\n    item.binary.data.fileName = \"audio.ogg\";\n  }\n}\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1840,
+        64
+      ],
+      "id": "c4e3a9ad-1cd9-40c3-a843-592429a1d294",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "=Erro ao converter o audio para a formatacao certa. Tente enviar o audio novamente em alguns instantes.",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -1200,
+        64
+      ],
+      "id": "fb209b71-fb3c-410c-a815-0232eb62e3e9",
+      "name": "Send a text message",
+      "webhookId": "dc6f2f9c-42d3-4c11-90e4-dae432e27da8",
+      "credentials": {
+        "telegramApi": {
+          "id": "avaesdvdfxzbgvdfzv",
+          "name": "BOT TELEGRAM AUTOMACAO OFICINA"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "errorMessage": "Erro ao converter a transcricao do audio para o formato JSON desejado"
+      },
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        -976,
+        128
+      ],
+      "id": "b305b15b-6e60-4654-a5a5-bd5f1a4ea832",
+      "name": "Stop and Error4"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.groq.com/openai/v1/chat/completions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "groqApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer daudhvaudvawvduab dia uydvauydia gdiojuabv dhuadhabdiuy awbvdad"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "model",
+              "value": "openai/gpt-oss-120b"
+            },
+            {
+              "name": "messages",
+              "value": "={{   [     {       \"role\": \"user\",       \"content\": \"Você é um assistente de oficina mecânica especializado em extração e estruturação de dados. Extraia as informações do áudio/texto fornecido e retorne EXCLUSIVAMENTE um objeto JSON válido contendo as seguintes chaves:\\n\\n- placa\\n- modelo\\n- quilometragem\\n- oleo\\n- quantidade_oleo\\n- filtro_de_oleo\\n- filtro_de_combustivel\\n- filtro_de_cabine\\n- filtro_de_ar\\n- arruela\\n- itens_extras (array/lista de itens)\\n- data\\n\\nREGRAS OBRIGATÓRIAS DE PREENCHIMENTO:\\n\\n1. ORIGEM DOS INSUMOS E PEÇAS (oleo, filtro_de_oleo, filtro_de_combustivel, filtro_de_cabine, filtro_de_ar):\\n   - Se for informada a origem (\\\"estoque\\\" ou \\\"autopecas\\\"), formate o valor combinando o item com a origem no padrão: \\\"ITEM - ORIGEM\\\". \\n     Exemplos: \\\"5W30 - estoque\\\", \\\"5W30 - autopecas\\\", \\\"OC 1449 - estoque\\\", \\\"FAC 303 - autopecas\\\".\\n   - Escreva sempre \\\"autopecas\\\" sem acento caso a origem seja autopeças.\\n   - Se a origem não for informada no texto, retorne apenas o código/especificação da peça (ex: \\\"5W30\\\").\\n\\n2. VALORES ESTRITAMENTE NUMÉRICOS:\\n   - Os campos \\\"quilometragem\\\" e \\\"quantidade_oleo\\\" devem conter APENAS números inteiros ou decimais (remova termos como \\\"km\\\", \\\"litros\\\", \\\"l\\\", \\\"L\\\", etc.). Exemplo: se falado \\\"4 litros\\\", retorne 4.\\n\\n3. REGRA DA ARRUELA:\\n   - O campo \\\"arruela\\\" DEVE ser retornado como \\\"sim\\\" se for mencionada no texto e como \\\"nao\\\" caso não seja dita.\\n\\n4. CAMPOS AUSENTES (VALOR NULL):\\n   - Com exceção do campo \\\"arruela\\\", qualquer informação que não for explicitamente mencionada no áudio/texto DEVE retornar com o valor null.\\n\\n5. DATA:\\n   - Preencha a chave \\\"data\\\" com a data atual da execução no formato DD/MM/AAAA. A data de hoje é: \" + $today + \".\\n\\n6. FORMATO DA SAÍDA:\\n   - Retorne APENAS o texto do JSON em formato puro (raw text).\\n   - É PROIBIDO utilizar formatação Markdown (NÃO use ```json ou ```).\\n   - É PROIBIDO incluir explicações, saudações ou qualquer caractere fora da estrutura do JSON.\\n\\nTexto a ser analisado: \" + $json.text     }   ] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        -1424,
+        -80
+      ],
+      "id": "bcf443e6-8a9d-42c8-82b9-4902bea18a53",
+      "name": "Request para IA",
+      "retryOnFail": true,
+      "maxTries": 2,
+      "credentials": {
+        "groqApi": {
+          "id": "verty5Be32b",
+          "name": "GROQ OFICINA"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.groq.com/openai/v1/audio/transcriptions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "groqApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer adkavd ajud awidb aid ajuwx aid asbd iauwbdio auwwbdoaw djas"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "file",
+              "inputDataFieldName": "data"
+            },
+            {
+              "name": "model",
+              "value": "whisper-large-v3-turbo"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        -1632,
+        64
+      ],
+      "id": "c64be03d-6dc6-4a16-addb-7916e8dee86a",
+      "name": "Request Transcricao de audio",
+      "retryOnFail": true,
+      "maxTries": 2,
+      "credentials": {
+        "groqApi": {
+          "id": "verty5Be32b",
+          "name": "GROQ OFICINA"
+        }
+      },
+      "onError": "continueErrorOutput"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Analise do tipo de mensagem",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Retorna mensagem de ERRO": {
+      "main": [
+        [
+          {
+            "node": "\"Encerra\" fluxo -> non-voice message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analise do tipo de mensagem": {
+      "main": [
+        [
+          {
+            "node": "Download do arquivo de audio",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Retorna mensagem de ERRO",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download do arquivo de audio": {
+      "main": [
+        [
+          {
+            "node": "MSG CONFIRMA download audio",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "MSG ERRO download voice",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insere informacoes na planilha": {
+      "main": [
+        [
+          {
+            "node": "Envia a mensagem de sucesso",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "MSG ERRO append planilha",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MSG ERRO download voice": {
+      "main": [
+        [
+          {
+            "node": "Stop and Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MSG ERRO transcr audio": {
+      "main": [
+        [
+          {
+            "node": "Stop and Error1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MSG ERRO append planilha": {
+      "main": [
+        [
+          {
+            "node": "Stop and Error2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia a mensagem de sucesso": {
+      "main": [
+        [
+          {
+            "node": "Formata mensagem",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File1": {
+      "main": [
+        [
+          {
+            "node": "ENVIA documento de informacoes",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "MSG ERRO criar .txt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MSG ERRO criar .txt": {
+      "main": [
+        [
+          {
+            "node": "Stop and Error3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Formata mensagem": {
+      "main": [
+        [
+          {
+            "node": "Convert to File1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MSG CONFIRMA download audio": {
+      "main": [
+        [
+          {
+            "node": "Recupera arquivo de audio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recupera arquivo de audio": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Request Transcricao de audio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a text message": {
+      "main": [
+        [
+          {
+            "node": "Stop and Error4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Request para IA": {
+      "main": [
+        [
+          {
+            "node": "Insere informacoes na planilha",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Request Transcricao de audio": {
+      "main": [
+        [
+          {
+            "node": "Request para IA",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "MSG ERRO transcr audio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "f020987c-46ab-4177-be99-39ef760be935",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "45ecce593421addfeda3881c1f75134f7724b2a953d04b8a4b8afde724b62e19"
+  },
+  "nodeGroups": [],
+  "id": "t1W7ZoKn74GRW4uG",
+  "tags": []
+}
